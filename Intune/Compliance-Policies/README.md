@@ -1,107 +1,148 @@
-# Windows Compliance Baseline
+# Windows Device Compliance
 
-Production-ready Microsoft Intune compliance policies designed to enforce device health, endpoint security, and Microsoft Defender for Endpoint risk requirements.
+Microsoft Intune compliance policies designed to evaluate Windows device health, endpoint protection, security intelligence, and Microsoft Defender for Endpoint device risk.
 
-These policies are intended for Microsoft Intune managed Windows devices and integrate with Microsoft Entra Conditional Access to support Zero Trust security principles.
+These policies can be used with Microsoft Entra Conditional Access to require Windows devices to meet defined security requirements before accessing organisational resources.
 
-## Included Policies
+> **Important:** Review and test all policies in a pilot group before deploying them in a production environment.
+
+## Included Files
 
 | File | Description |
-|--------|--------|
-| ZTBH - Windows - Compliance - Device Health.json | Validates device encryption and platform security features. |
-| ZTBH - Windows - Compliance - Security.json | Validates endpoint security and protection services. |
-| ZTBH - Windows - Compliance - Security Intelligence.json | Validates Microsoft Defender security intelligence updates. |
-| ZTBH - Windows - Compliance - MDE Risk.json | Validates Defender for Endpoint device risk levels. |
+|------|-------------|
+| ZTBH - Windows - Compliance - Device Health.json | Validates BitLocker, Secure Boot, and Code Integrity requirements. |
+| ZTBH - Windows - Compliance - Security.json | Validates Microsoft Defender Antivirus, Real-Time Protection, Anti-Spyware, and Windows Firewall. |
+| ZTBH - Windows - Compliance - Security Intelligence.json | Validates that Microsoft Defender is enabled and security intelligence is current. |
+| ZTBH - Windows - Compliance - MDE Risk.json | Uses Microsoft Defender for Endpoint device-risk signals to evaluate compliance. |
+| General Compliance Notification.json | Notification template used to inform users when a device has a compliance issue. |
 
 ---
 
-## Purpose
+## Policy Overview
 
-This compliance baseline helps organizations:
+The compliance configuration is separated into four policies. This makes each area easier to test, assign, troubleshoot, and update independently.
 
-- Enforce device encryption
-- Validate endpoint protection
-- Verify security intelligence currency
-- Assess endpoint risk using Defender for Endpoint
-- Support Conditional Access requirements
-- Implement Zero Trust controls
+### ZTBH - Windows - Compliance - Device Health
 
----
+Validates core Windows device-health protections.
 
-## ZTBH - Windows - Compliance - Device Health
+#### Included controls
 
-### Included Controls
+- BitLocker enabled
+- Secure Boot enabled
+- Code Integrity enabled
 
-- BitLocker Enabled
-- Secure Boot Enabled
-- Code Integrity Enabled
+#### Purpose
 
-### Purpose
-
-Ensures devices meet core security requirements by validating device encryption, trusted boot protection, and operating system integrity.
+Helps ensure that managed Windows devices use encryption, trusted boot protection, and operating-system integrity controls.
 
 ---
 
-## ZTBH - Windows - Compliance - Security
+### ZTBH - Windows - Compliance - Security
 
-### Included Controls
+Validates the status of the main Windows endpoint security protections.
 
-- Microsoft Defender Enabled
-- Real-Time Protection Enabled
-- Antivirus Required
-- Anti-Spyware Required
-- Windows Firewall Required
+#### Included controls
 
-### Purpose
+- Microsoft Defender enabled
+- Real-Time Protection enabled
+- Antivirus required
+- Anti-Spyware required
+- Windows Firewall required
 
-Ensures security protections remain active and healthy, reducing the risk of malware, unauthorized access, and endpoint compromise.
+#### Purpose
 
----
-
-## ZTBH - Windows - Compliance - Security Intelligence
-
-### Included Controls
-
-- Microsoft Defender Enabled
-- Security Intelligence Signatures Current
-
-### Purpose
-
-Verifies that Microsoft Defender receives current threat intelligence and malware definition updates.
+Helps ensure that endpoint protection and Windows Firewall remain enabled on managed Windows devices.
 
 ---
 
-## ZTBH - Windows - Compliance - MDE Risk
+### ZTBH - Windows - Compliance - Security Intelligence
 
-### Included Controls
+Validates Microsoft Defender and its security intelligence status.
 
-- Microsoft Defender for Endpoint Integration
-- Maximum Device Risk Level: Medium
+#### Included controls
 
-### Purpose
+- Microsoft Defender enabled
+- Security intelligence signatures must not be out of date
 
-Uses Microsoft Defender for Endpoint risk assessments to identify compromised or suspicious devices and enforce risk-based compliance.
+#### Purpose
+
+Helps ensure that devices use current Microsoft Defender security intelligence when evaluating compliance.
+
+---
+
+### ZTBH - Windows - Compliance - MDE Risk
+
+Uses Microsoft Defender for Endpoint risk information as part of the Intune compliance assessment.
+
+#### Included controls
+
+- Microsoft Defender for Endpoint device-risk integration enabled
+- Maximum permitted device-risk level: Medium
+
+#### Purpose
+
+Allows Intune to mark a device as non-compliant when its Microsoft Defender for Endpoint risk level exceeds the configured threshold.
+
+---
+
+## Compliance Notification
+
+### General Compliance Notification
+
+The included notification template can be linked to an Intune compliance policy action to inform users when a device has a compliance issue.
+
+The template includes:
+
+- Organisation name and logo
+- Organisation contact information
+- Company Portal link
+- User name
+- Device name
+- Operating-system version
+- Intune device ID
+- Guidance to open Company Portal and select **Check access**
+- IT Service Desk contact details
+
+The default language configured in the exported template is English (United Kingdom), identified as `en-gb`.
 
 ---
 
 ## Conditional Access Integration
 
-These policies are designed to work alongside Microsoft Entra Conditional Access policies, including:
+These compliance policies can support Microsoft Entra Conditional Access controls such as:
 
-- Require compliant device
-- Require approved applications
-- Block non-compliant devices
-- Restrict access to unmanaged devices
-- Enforce Zero Trust access controls
+- Require device to be marked as compliant
+- Block access from non-compliant devices
+- Restrict access from unmanaged devices
+- Combine device compliance with additional grant controls
+
+Conditional Access policies are not included in this folder.
 
 ---
 
-## Technologies
+## Recommended Deployment Approach
 
-- Microsoft Intune
-- Microsoft Entra ID
-- Conditional Access
-- Microsoft Defender Antivirus
-- Microsoft Defender for Endpoint
-- Windows Security
-- Zero Trust Security
+Before production deployment:
+
+1. Import or recreate the required policies in Microsoft Intune.
+2. Review every imported setting.
+3. Confirm that Microsoft Defender for Endpoint integration is configured before using the MDE Risk policy.
+4. Assign the policies to a small pilot group.
+5. Monitor compliance results and identify devices that cannot meet the requirements.
+6. Test the notification template and remediation guidance.
+7. Configure appropriate grace periods before enforcing access restrictions.
+8. Expand assignments only after pilot testing is complete.
+
+---
+
+## Repository Structure
+
+```text
+Compliance-Policies
+├── README.md
+├── ZTBH - Windows - Compliance - Device Health.json
+├── ZTBH - Windows - Compliance - Security.json
+├── ZTBH - Windows - Compliance - Security Intelligence.json
+├── ZTBH - Windows - Compliance - MDE Risk.json
+└── General Compliance Notification.json
